@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install --no-cache-dir discord.py groq aiohttp google-genai aiofiles
+        run: pip install --no-cache-dir discord.py groq aiohttp google-genai aiofiles openai
 
       - name: Write bot file
         env:
@@ -41,8 +41,10 @@ jobs:
           MAIN_API_KEY:   ${{ secrets.MAIN_API_KEY }}
           SUMM_API_KEY:   ${{ secrets.SUMM_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: |
           [ -z "$DISCORD_TOKEN" ] && { echo "DISCORD_TOKEN missing"; exit 1; }
+          [ -z "$NVIDIA_API_KEY" ] && { echo "NVIDIA_API_KEY missing"; exit 1; }
 
           python bitrot_syndicate_bot.py &
           BOT_PID=$!
