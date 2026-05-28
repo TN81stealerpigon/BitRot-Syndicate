@@ -1,0 +1,43 @@
+name: CLEAN ALL WORKFLOW RUNS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Delete all workflow runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Deleting ALL workflow runs for $REPO..."
+
+          # Get all workflow run IDs (completed, failed, cancelled, in-progress)
+          run_ids=$(gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/$REPO/actions/runs" \
+            --jq '.workflow_runs[].id')
+
+          if [ -z "$run_ids" ]; then
+            echo "No runs to delete."
+            exit 0
+          fi
+
+          count=0
+          for id in $run_ids; do
+            echo "Deleting run $id..."
+            gh api \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              "/repos/$REPO/actions/runs/$id" || echo "Failed to delete $id"
+            count=$((count + 1))
+            sleep 0.3
+          done
+
+          echo "Done. Deleted $count workflow runs."
