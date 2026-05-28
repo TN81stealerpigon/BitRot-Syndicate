@@ -74,7 +74,7 @@ jobs:
 
           run_ids=$(gh api --paginate \
             -H "Accept: application/vnd.github+json" \
-            "/repos/$REPO/actions/workflows/bitrot.yml/runs" \
+            "/repos/$REPO/actions/workflows/bitrot_syndicate.yml/runs" \
             --jq '.workflow_runs[] | select(.status == "completed" or .status == "failure" or .status == "cancelled") | .id')
 
           if [ -z "$run_ids" ]; then
