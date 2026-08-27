@@ -28,23 +28,29 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install --no-cache-dir discord.py groq aiohttp google-genai aiofiles openai
+        run: pip install --no-cache-dir discord.py groq aiohttp aiofiles openai huggingface-hub google-genai
 
       - name: Write bot file
         env:
-          BOT_CODE: ${{ secrets.BOT_CODE }}
+          BOT_CODE: ${{ secrets.BOT_CODE_BITROT }}
         run: printf '%s\n' "$BOT_CODE" > bitrot_syndicate_bot.py
 
       - name: Run BitRot
         env:
-          DISCORD_TOKEN:  ${{ secrets.DISCORD_TOKEN }}
-          MAIN_API_KEY:   ${{ secrets.MAIN_API_KEY }}
-          SUMM_API_KEY:   ${{ secrets.SUMM_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          DISCORD_TOKEN:            ${{ secrets.DISCORD_TOKEN_BITROT }}
+          GEMINI_API_KEY:           ${{ secrets.GEMINI_API_KEY_BITROT }}
+          HF_MAIN_TOKEN:            ${{ secrets.HF_MAIN_TOKEN_BITROT }}
+          HF_SUMM_TOKEN:            ${{ secrets.HF_SUMM_TOKEN_BITROT }}
+          NVIDIA_MAIN_API_KEY:      ${{ secrets.NVIDIA_MAIN_API_KEY_BITROT }}
+          NVIDIA_SUMM_API_KEY:      ${{ secrets.NVIDIA_SUMM_API_KEY_BITROT }}
+          GROQ_MAIN_API_KEY:        ${{ secrets.GROQ_MAIN_API_KEY_BITROT }}
+          GROQ_SUMM_API_KEY:        ${{ secrets.GROQ_SUMM_API_KEY_BITROT }}
+          OPENAI_MAIN_API_KEY:      ${{ secrets.OPENAI_MAIN_API_KEY_BITROT }}
+          OPENAI_SUMM_API_KEY:      ${{ secrets.OPENAI_SUMM_API_KEY_BITROT }}
+          OPENROUTER_MAIN_API_KEY:  ${{ secrets.OPENROUTER_MAIN_API_KEY_BITROT }}
+          OPENROUTER_SUMM_API_KEY:  ${{ secrets.OPENROUTER_SUMM_API_KEY_BITROT }}
         run: |
           [ -z "$DISCORD_TOKEN" ] && { echo "DISCORD_TOKEN missing"; exit 1; }
-          [ -z "$NVIDIA_API_KEY" ] && { echo "NVIDIA_API_KEY missing"; exit 1; }
 
           python bitrot_syndicate_bot.py &
           BOT_PID=$!
