@@ -76,6 +76,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           CURRENT=${{ github.run_id }}
+          echo "Current run: $CURRENT"
           echo "Cleaning up old BitRot runs..."
 
           run_ids=$(gh api --paginate \
@@ -89,8 +90,11 @@ jobs:
           fi
 
           for id in $run_ids; do
-            [ "$id" = "$CURRENT" ] && continue
-            echo "Deleting run $id..."
+            if [ "$id" = "$CURRENT" ]; then
+              echo "Skipping current run: $id"
+              continue
+            fi
+            echo "Deleting old run: $id"
             gh api \
               -X DELETE \
               -H "Accept: application/vnd.github+json" \
